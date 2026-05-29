@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "windroot"
+version = "0.1.0"
+description = "Observation-driven solar-wind source-region finder: fuses magnetic connectivity (PFSS + ballistic back-mapping) with spectroscopic outflow evidence (SPICE/EIS Doppler maps)"
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Vibhav Aggarwal", email = "vibhav.aggarwal2@gmail.com"},
+    {name = "Arpit Kumar Shrivastav", email = "arpitkshrivastav@gmail.com"},
+]
+keywords = [
+    "solar physics", "solar wind", "source regions", "PFSS",
+    "ballistic back-mapping", "magnetic connectivity", "spectroscopy",
+    "Solar Orbiter", "SPICE", "Hinode EIS", "Parker Solar Probe", "PUNCH",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "numpy>=1.22",
+    "scipy>=1.9",
+    "astropy>=5.0",
+]
+
+[project.optional-dependencies]
+# Heavy real-data integrations. Core works without these (synthetic + gridded inputs).
+plot = ["matplotlib>=3.6"]
+pfss = ["sunkit-magex>=1.0", "sunpy>=5.0"]
+data = ["sunpy>=5.0", "ndcube>=2.0"]
+insitu = ["pandas>=1.5"]
+spice = ["sunraster>=0.5", "ndcube>=2.0"]
+eis = ["eispac>=0.95"]
+connect = ["solar-mach>=0.4"]
+ml = ["scikit-learn>=1.2"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "matplotlib>=3.6"]
+all = ["windroot[plot,pfss,data,insitu,spice,connect,ml,dev]"]
+
+[project.scripts]
+windroot = "windroot.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Vibhav-Aggarwal/windroot"
+Issues = "https://github.com/Vibhav-Aggarwal/windroot/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.setuptools.packages.find]
+include = ["windroot*"]
