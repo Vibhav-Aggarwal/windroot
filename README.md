@@ -104,10 +104,23 @@ pip install -e ".[dev]" && pytest --cov=windroot
 - the **spectroscopic layer re-ranks** a magnetically-weaker candidate above a
   magnetically-stronger one when outflow is observed there (the core claim).
 
-**Next step (real-data backtest):** reproduce a published PSP source-region
-conjunction (Badman/Dakeyo) with a GONG/ADAPT magnetogram via the `pfss` extra,
-then overlay a real SPICE/EIS Doppler map. The hooks are in
-`examples/worked_example_AR_to_PSP.py`.
+**Multi-dataset backtest suite** (see `backtests/` and [BACKTEST_REPORT.md](BACKTEST_REPORT.md)):
+
+| | what | result |
+|---|---|---|
+| **A** | synthetic multi-case: recovery of analytic dipole truth across varying speed/latitude, robustness to a 60-deg spurious outflow decoy, and spectroscopic discrimination under wide-MC ambiguity | **27/27 pass** (9 + 9 + 9) |
+| **B** | cross-validate windroot's analytic dipole footpoint mapping against an independent numerical PFSS (sunkit-magex) on a synthetic dipolar magnetogram, 64 seeds | **RMS dlon = 0.00 deg, dlat = 0.23 deg** |
+| **C** | full pipeline on a real GONG synoptic magnetogram (CR 2234, 2020-09-01) for 6 streams across Carrington longitudes | **6/6 streams produce PFSS candidates; median 16.1 deg separation from the dipole result** (PFSS is using real structure) |
+
+Run the suite (needs the `pfss` extra):
+```bash
+python -m backtests.run_all       # writes BACKTEST_REPORT.md
+```
+
+**Next step (real-data PSP/OMNI events):** reproduce a published PSP source-region
+conjunction (Badman/Dakeyo) with a CR-matched GONG/ADAPT magnetogram, then
+overlay a real SPICE/EIS Doppler map. Backtest C is the scaffolding; supplying
+the published event metadata is the only remaining work.
 
 ## Known limitations
 

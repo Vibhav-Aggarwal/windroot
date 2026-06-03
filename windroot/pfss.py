@@ -62,6 +62,10 @@ class DipoleSourceSurface:
         # B_r(r_sun, theta=0) = -a (1 + 2 r_ss^3/r_sun^3) = b_polar  =>  a = -b_polar/(...)
         self._a = -b_polar / (1.0 + 2.0 * self.r_ss**3 / self.r_sun**3)
 
+    def map_footpoints(self, lon_ss, lat_ss):
+        """Vectorised analytic photospheric mapping; the field-mapper interface."""
+        return map_footpoints(self, lon_ss, lat_ss)
+
     # --- magnetic field (spherical, axisymmetric) ---
     def b_r(self, r, theta):
         return -self._a * (1.0 + 2.0 * self.r_ss**3 / r**3) * np.cos(theta)

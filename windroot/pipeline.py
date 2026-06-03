@@ -73,7 +73,10 @@ def find_sources(
         rng=rng,
     )
 
-    lon_phot, lat_phot = map_footpoints(field, ensemble.lon_ss, ensemble.lat_ss)
+    if hasattr(field, "map_footpoints"):
+        lon_phot, lat_phot = field.map_footpoints(ensemble.lon_ss, ensemble.lat_ss)
+    else:
+        lon_phot, lat_phot = map_footpoints(field, ensemble.lon_ss, ensemble.lat_ss)
 
     candidates = rank_sources(
         lon_phot,

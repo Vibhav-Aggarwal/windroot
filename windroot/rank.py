@@ -62,6 +62,10 @@ def rank_sources(
     """
     lon_phot = np.asarray(lon_phot, dtype=float)
     lat_phot = np.asarray(lat_phot, dtype=float)
+    # closed-line / failed traces come back as NaN; drop them before binning
+    good = np.isfinite(lon_phot) & np.isfinite(lat_phot)
+    lon_phot = lon_phot[good]
+    lat_phot = lat_phot[good]
     n_total = lon_phot.size
     if n_total == 0:
         return []
