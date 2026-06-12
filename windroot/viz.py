@@ -55,15 +55,23 @@ def plot_sources(
     ax.set_ylabel("latitude [deg]")
     ax.set_title(f"windroot source regions — {result.stream.label or 'stream'}")
 
-    lon_span = result.lon_phot.max() - result.lon_phot.min()
-    lat_span = result.lat_phot.max() - result.lat_phot.min()
+    # focus only when we have a real, finite cloud (PFSS may return all-NaN if every
+    # seed lands on a closed field line).
+    finite = np.isfinite(result.lon_phot) & np.isfinite(result.lat_phot)
+    if focus and finite.any():
+        lon_finite = result.lon_phot[finite]
+        lat_finite = result.lat_phot[finite]
+        lon_span = float(lon_finite.max() - lon_finite.min())
+        lat_span = float(lat_finite.max() - lat_finite.min())
+    else:
+        lon_span, lat_span = 361.0, 181.0
     if focus and lon_span < 120 and lat_span < 80:
         padx = max(10.0, 0.4 * lon_span)
         pady = max(10.0, 0.6 * lat_span + 10.0)
-        ax.set_xlim(result.lon_phot.min() - padx, result.lon_phot.max() + padx)
+        ax.set_xlim(lon_finite.min() - padx, lon_finite.max() + padx)
         ax.set_ylim(
-            max(-90, result.lat_phot.min() - pady),
-            min(90, result.lat_phot.max() + pady),
+            max(-90, lat_finite.min() - pady),
+            min(90, lat_finite.max() + pady),
         )
     else:
         ax.set_xlim(0, 360)

@@ -26,11 +26,20 @@ from .spectro import DopplerMap
 class SourceCandidate:
     lon: float                 # candidate centre longitude [deg]
     lat: float                 # candidate centre latitude [deg]
-    connectivity_score: float  # in [0, 1]
-    outflow_score: float       # in [0, 1] (0.5 if no spectroscopic data)
-    outflow_kms: float         # raw sampled upflow [km/s] (nan if none)
+    connectivity_score: float  # in [0, 1], relative to the densest candidate in this call
+    outflow_score: float       # 0.5 if no Doppler map was provided (neutral); in [0, 1]
+                               # normalised across covered candidates when a map IS
+                               # provided; NaN if the candidate lies outside the map's
+                               # spectroscopic coverage (no evidence either way)
+    outflow_kms: float         # raw sampled upflow [km/s] (NaN if none)
     confidence: float          # combined, in [0, 1]
     n_samples: int             # MC footpoints attributed to this candidate
+
+    @property
+    def has_outflow_evidence(self) -> bool:
+        """True iff a Doppler map was supplied AND covered this candidate."""
+        import math
+        return not math.isnan(self.outflow_score) and self.outflow_score != 0.5
 
 
 def rank_sources(
@@ -125,9 +134,16 @@ def rank_sources(
             if np.isfinite(c.outflow_kms):
                 c.outflow_score = float(np.clip((max(c.outflow_kms, 0.0) - lo) / rng, 0.0, 1.0))
             else:
-                c.outflow_score = 0.0  # no spectroscopic coverage = no evidence
+                # candidate lies outside the Doppler map's coverage -> no evidence
+                # either way; do NOT collapse to 0 (which would penalise it as if it
+                # were a confirmed downflow). NaN here is read by the confidence loop
+                # below to fall back to connectivity-only for this candidate.
+                c.outflow_score = float("nan")
         for c in candidates:
-            c.confidence = wc * c.connectivity_score + wo * c.outflow_score
+            if np.isnan(c.outflow_score):
+                c.confidence = c.connectivity_score
+            else:
+                c.confidence = wc * c.connectivity_score + wo * c.outflow_score
     else:
         # connectivity only
         for c in candidates:

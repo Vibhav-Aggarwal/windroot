@@ -59,6 +59,11 @@ class DipoleSourceSurface:
     def __init__(self, r_ss: float = DEFAULT_R_SS, b_polar: float = 1.0, r_sun: float = 1.0):
         self.r_ss = float(r_ss)
         self.r_sun = float(r_sun)
+        if self.r_ss <= self.r_sun:
+            raise ValueError(
+                f"r_ss ({self.r_ss}) must be > r_sun ({self.r_sun}); the source "
+                "surface sits above the photosphere by definition."
+            )
         # B_r(r_sun, theta=0) = -a (1 + 2 r_ss^3/r_sun^3) = b_polar  =>  a = -b_polar/(...)
         self._a = -b_polar / (1.0 + 2.0 * self.r_ss**3 / self.r_sun**3)
 

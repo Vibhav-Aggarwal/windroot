@@ -42,7 +42,7 @@ eis = ["eispac>=0.95"]
 connect = ["solar-mach>=0.4"]
 ml = ["scikit-learn>=1.2"]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "matplotlib>=3.6"]
-all = ["windroot[plot,pfss,data,insitu,spice,connect,ml,dev]"]
+all = ["windroot[plot,pfss,data,insitu,spice,eis,connect,ml,dev]"]
 
 [project.scripts]
 windroot = "windroot.cli:main"

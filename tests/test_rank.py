@@ -69,3 +69,33 @@ def test_confidence_in_unit_interval():
     for c in rank_sources(lon, lat):
         assert 0.0 <= c.confidence <= 1.0
         assert 0.0 <= c.connectivity_score <= 1.0
+
+
+def test_uncovered_candidate_falls_back_to_connectivity_only():
+    """A Doppler map that doesn't spatially cover a candidate must leave it
+    scored by connectivity only — not penalised as if it were a confirmed
+    downflow. This is the post-review semantic fix.
+    """
+    import math
+    rng = np.random.default_rng(11)
+    lon, lat = _two_clusters(rng)
+    # Doppler grid covers only cluster B's neighbourhood; cluster A is outside.
+    glon = np.arange(240, 261, 1.0)
+    glat = np.arange(-20, 1, 1.0)
+    LON, LAT = np.meshgrid(glon, glat)
+    upflow = 30.0 * np.exp(-(((LON - 250) / 5) ** 2 + ((LAT + 10) / 5) ** 2))
+    dm = DopplerMap(glon, glat, upflow)
+
+    cands = rank_sources(lon, lat, doppler_map=dm, w_connectivity=0.5, w_outflow=0.5)
+    a = next(c for c in cands if 90 < c.lon < 110)         # cluster A: uncovered
+    b = next(c for c in cands if 240 < c.lon < 260)        # cluster B: covered
+
+    assert math.isnan(a.outflow_score)
+    assert not math.isnan(b.outflow_score)
+    # Uncovered: confidence == connectivity_score (no penalty for missing evidence)
+    assert a.confidence == pytest.approx(a.connectivity_score)
+    # Covered: blended
+    assert b.confidence != b.connectivity_score
+    # has_outflow_evidence property reports correctly
+    assert not a.has_outflow_evidence
+    assert b.has_outflow_evidence
