@@ -134,7 +134,7 @@ the published event metadata is the only remaining work.
 
 ## Authors
 
-Vibhav Aggarwal, Arpit Kumar Shrivastav (intended co-author).
+Vibhav Aggarwal, Arpit Kumar Shrivastav (inspiration and intended co-author).
 
 ## License
 
