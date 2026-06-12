@@ -1,0 +1,35 @@
+{
+  "title": "windroot: observation-driven solar-wind source-region finder",
+  "description": "<p>windroot fuses magnetic connectivity (PFSS + ballistic back-mapping) with spectroscopic outflow evidence (SPICE / Hinode EIS Doppler maps) to identify and rank solar-wind source regions on the Sun. Existing tools rely on magnetic geometry alone; windroot adds the missing observation-driven evidence layer. Includes a multi-dataset backtest suite (synthetic recovery, sunkit-magex cross-validation, and end-to-end on a real GONG CR&nbsp;2234 synoptic magnetogram).</p>",
+  "upload_type": "software",
+  "license": "BSD-3-Clause",
+  "access_right": "open",
+  "language": "eng",
+  "keywords": [
+    "solar physics",
+    "solar wind",
+    "source regions",
+    "PFSS",
+    "ballistic back-mapping",
+    "magnetic connectivity",
+    "spectroscopy",
+    "SPICE",
+    "Solar Orbiter",
+    "Hinode EIS",
+    "Parker Solar Probe",
+    "PUNCH"
+  ],
+  "creators": [
+    {
+      "name": "Aggarwal, Vibhav",
+      "orcid": "0009-0000-7686-7119"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Vibhav-Aggarwal/windroot",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}
